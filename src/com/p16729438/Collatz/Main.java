@@ -37,7 +37,7 @@ public class Main {
                 q = new BigInteger("9");
             }
             if (!isFileExist(a, b)) {
-                if (i == 4) {
+                if (i == ThreadCount) {
 
                     i = 0;
                 }
@@ -62,7 +62,7 @@ public class Main {
                     continue;
                 }
                 if (returnCode == 2) {
-                    for (int k = 0; k < 4; k++)
+                    for (int k = 0; k < ThreadCount; k++)
                         Threads[k].stopWork();
                     return;
                 }
