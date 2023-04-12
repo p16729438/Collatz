@@ -7,7 +7,7 @@ import java.util.ArrayList;
 import com.p16729438.Collatz.Thread.CollatzThread;
 
 public class Main {
-    private static final int ThreadCount = 8;
+    private static final int ThreadCount = Runtime.getRuntime().availableProcessors();
 
     private static CollatzThread[] Threads = new CollatzThread[ThreadCount];
 
@@ -18,6 +18,7 @@ public class Main {
     private static ArrayList<BigInteger> PowNumbers = new ArrayList<>();
 
     public static void main(String[] args) {
+        System.out.println("Thread Count: " + ThreadCount);
         int a = 4;
         int b = 2;
         PowNumbers.add(TWO.pow(0));
