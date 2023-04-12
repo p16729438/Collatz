@@ -151,14 +151,14 @@ public class CollatzThread extends Thread {
 
     private boolean isFileExist(int a, int b) {
         createFolder();
-        File file = new File("data/" + a + ":" + b + ".txt");
+        File file = new File("data/" + a + "." + b + ".txt");
         return (file.exists() && file.isFile());
     }
 
     private void createFile(int a, int b) {
         createFolder();
         if (!isFileExist(a, b)) {
-            File file = new File("data/" + a + ":" + b + ".txt");
+            File file = new File("data/" + a + "." + b + ".txt");
             try {
                 file.createNewFile();
             } catch (IOException exception) {
@@ -169,7 +169,7 @@ public class CollatzThread extends Thread {
 
     private void writeData(int a, int b) {
         try {
-            File file = new File("data/" + a + ":" + b + ".txt");
+            File file = new File("data/" + a + "." + b + ".txt");
             FileWriter w = new FileWriter(file);
             for (String log : Logs)
                 w.append(String.valueOf(log) + "\n");

@@ -7,7 +7,7 @@ import java.util.ArrayList;
 import com.p16729438.Collatz.Thread.CollatzThread;
 
 public class Main {
-    private static final int ThreadCount = 4;
+    private static final int ThreadCount = 8;
 
     private static CollatzThread[] Threads = new CollatzThread[ThreadCount];
 
@@ -75,7 +75,7 @@ public class Main {
 
     private static boolean isFileExist(int a, int b) {
         createFolder();
-        File file = new File("data/" + a + ":" + b + ".txt");
+        File file = new File("data/" + a + "." + b + ".txt");
         return (file.exists() && file.isFile());
     }
 
