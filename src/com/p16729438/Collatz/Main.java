@@ -19,6 +19,11 @@ public class Main {
 
     public static void main(String[] args) {
         System.out.println("Thread Count: " + ThreadCount);
+        try {
+            Thread.sleep(1000);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
         int a = 4;
         int b = 2;
         PowNumbers.add(TWO.pow(0));
