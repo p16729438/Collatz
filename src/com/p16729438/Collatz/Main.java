@@ -20,7 +20,7 @@ public class Main {
     public static void main(String[] args) {
         System.out.println("Thread Count: " + ThreadCount);
         try {
-            Thread.sleep(1000);
+            Thread.sleep(10000);
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
