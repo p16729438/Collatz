@@ -55,13 +55,6 @@ public class CollatzThread extends Thread {
         writeData(a, b);
         System.out.println("[Thread-" + ID + "] a: " + a + ", b: " + b + " / End");
         init(0);
-        while (!Working) {
-            try {
-                Thread.sleep(1000L);
-            } catch (InterruptedException exception) {
-                exception.printStackTrace();
-            }
-        }
     }
 
     public void stopWork() {
