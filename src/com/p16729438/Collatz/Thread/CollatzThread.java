@@ -4,28 +4,27 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.math.BigInteger;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 
 public class CollatzThread extends Thread {
+    private long StartTime;
+    private long EndTime;
 
     private int ID;
 
     private int ReturnCode = 0;
 
     private final BigInteger ZERO = BigInteger.ZERO;
-
     private final BigInteger ONE = BigInteger.ONE;
-
     private final BigInteger TWO = BigInteger.TWO;
-
     private final BigInteger THREE = new BigInteger("3");
 
     private int a;
-
     private int b;
 
     private BigInteger p;
-
     private BigInteger q;
 
     private ArrayList<BigInteger> PowNumbers;
@@ -40,18 +39,21 @@ public class CollatzThread extends Thread {
         this.q = q;
         this.PowNumbers = powNumbers;
         ReturnCode = 1;
-        System.out.println("[Thread-" + ID + "] a: " + a + ", b: " + b + " / Start");
+        StartTime = System.nanoTime();
+        System.out.println(getTimeStamp() + "[Thread-" + ID + "] a: " + a + ", b: " + b + " / Start");
     }
 
     public void run() {
         if (isNExist(a, b, p, q, "", a, b - 1)) {
-            System.out.println("[Thread-" + ID + "] a: " + a + ", b: " + b + " / Loop Found");
+            EndTime = System.nanoTime();
+            System.out.println(getTimeStamp() + "[Thread-" + ID + "] a: " + a + ", b: " + b + " / Loop Found (time: " + ((EndTime - StartTime) / 1000000) + ")");
             init(2);
             return;
         }
         createFile(a, b);
         writeData(a, b);
-        System.out.println("[Thread-" + ID + "] a: " + a + ", b: " + b + " / End");
+        EndTime = System.nanoTime();
+        System.out.println(getTimeStamp() + "[Thread-" + ID + "] a: " + a + ", b: " + b + " / End (time: " + ((EndTime - StartTime) / 1000000) + ")");
         init(0);
     }
 
@@ -139,6 +141,10 @@ public class CollatzThread extends Thread {
             return N.divide(TWO);
         }
         return N.multiply(THREE).add(ONE);
+    }
+
+    private String getTimeStamp() {
+        return new SimpleDateFormat("[yyyy-MM-dd (EEE)  a hh:mm:ss]     ").format(new Date());
     }
 
     private boolean isFileExist(int a, int b) {

@@ -12,7 +12,6 @@ public class Main {
     private static CollatzThread[] Threads;
 
     private static final BigInteger TWO = BigInteger.TWO;
-
     private static final BigInteger THREE = new BigInteger("3");
 
     private static ArrayList<BigInteger> PowNumbers = new ArrayList<>();
