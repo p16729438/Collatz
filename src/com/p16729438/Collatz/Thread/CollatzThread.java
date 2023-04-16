@@ -40,20 +40,20 @@ public class CollatzThread extends Thread {
         this.PowNumbers = powNumbers;
         ReturnCode = 1;
         StartTime = System.nanoTime();
-        System.out.println(getTimeStamp() + "[Thread-" + ID + "] a: " + a + ", b: " + b + " / Start");
+        System.out.println(getTimeStamp() + "[Thread-" + String.format("%05d", ID) + "] a: " + a + ", b: " + b + " / Start");
     }
 
     public void run() {
         if (isNExist(a, b, p, q, "", a, b - 1)) {
             EndTime = System.nanoTime();
-            System.out.println(getTimeStamp() + "[Thread-" + ID + "] a: " + a + ", b: " + b + " / Loop Found (time: " + ((EndTime - StartTime) / 1000000) + ")");
+            System.out.println(getTimeStamp() + "[Thread-" + String.format("%05d", ID) + "] a: " + a + ", b: " + b + " / Loop Found (time: " + ((EndTime - StartTime) / 1000000) + ")");
             init(2);
             return;
         }
         createFile(a, b);
         writeData(a, b);
         EndTime = System.nanoTime();
-        System.out.println(getTimeStamp() + "[Thread-" + ID + "] a: " + a + ", b: " + b + " / End (time: " + ((EndTime - StartTime) / 1000000) + ")");
+        System.out.println(getTimeStamp() + "[Thread-" + String.format("%05d", ID) + "] a: " + a + ", b: " + b + " / End (time: " + ((EndTime - StartTime) / 1000000) + ")");
         init(0);
     }
 
