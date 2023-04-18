@@ -83,8 +83,8 @@ public class CollatzThread extends Thread {
             return false;
         }
         if (n == r) {
-            String zero = "1";
-            String newStr = String.valueOf(str) + zero.repeat(n);
+            String one = "1";
+            String newStr = String.valueOf(str) + one.repeat(n);
             BigInteger k = getK(newStr);
             return check(a, b, newStr, k, p, q);
         }
