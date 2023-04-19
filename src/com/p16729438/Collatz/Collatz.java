@@ -85,6 +85,7 @@ public class Collatz {
                 if (returnCode == 0) {
                     threads[index].interrupt();
                     threads[index] = new CollatzThread(index, a, b, p, q, PowNumbers);
+                    appendLog(CollatzUtil.getTimeStamp() + "[Thread-" + String.format("%05d", index) + "] a: " + a + ", b: " + b + " / Start");
                     threads[index].start();
                     b++;
                     q = q.multiply(THREE);
