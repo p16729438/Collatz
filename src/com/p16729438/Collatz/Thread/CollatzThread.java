@@ -6,19 +6,17 @@ import java.io.IOException;
 import java.math.BigInteger;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 
 public class CollatzThread extends Thread {
-    private long StartTime;
-    private long EndTime;
-
     private int ID;
 
-    private int ReturnCode = 0;
+    private int ReturnCode = 0;// 0: 준비, 1: 실행, 2: 완료
 
-    private final BigInteger ZERO = BigInteger.ZERO;
-    private final BigInteger ONE = BigInteger.ONE;
-    private final BigInteger TWO = BigInteger.TWO;
+    private final BigInteger ZERO = new BigInteger("0");
+    private final BigInteger ONE = new BigInteger("1");
+    private final BigInteger TWO = new BigInteger("2");
     private final BigInteger THREE = new BigInteger("3");
 
     private int a;
@@ -32,93 +30,84 @@ public class CollatzThread extends Thread {
     private ArrayList<String> Logs = new ArrayList<>();
 
     public CollatzThread(int id, int a, int b, BigInteger p, BigInteger q, ArrayList<BigInteger> powNumbers) {
+        ReturnCode = 1;
         this.ID = id;
         this.a = a;
         this.b = b;
         this.p = p;
         this.q = q;
         this.PowNumbers = powNumbers;
-        ReturnCode = 1;
-        StartTime = System.nanoTime();
-        System.out.println(getTimeStamp() + "[Thread-" + String.format("%05d", ID) + "] a: " + a + ", b: " + b + " / Start");
     }
 
+    @Override
     public void run() {
-        if (isNExist(a, b, p, q, "", a, b - 1)) {
-            EndTime = System.nanoTime();
-            System.out.println(getTimeStamp() + "[Thread-" + String.format("%05d", ID) + "] a: " + a + ", b: " + b + " / Loop Found (time: " + ((EndTime - StartTime) / 1000000) + ")");
-            init(2);
+        long startTime = System.currentTimeMillis();
+        System.out.println(getTimeStamp() + "[Thread-" + String.format("%05d", ID) + "] a: " + a + ", b: " + b + " / Start");
+        if (isNExist(new boolean[a], a, b - 1, 0)) {
+            long endTime = System.currentTimeMillis();
+            System.out.println(getTimeStamp() + "[Thread-" + String.format("%05d", ID) + "] a: " + a + ", b: " + b + " / Loop Found (time: " + (endTime - startTime) + "ms)");
+            setReturnCode(2);
             return;
         }
-        createFile(a, b);
-        writeData(a, b);
-        EndTime = System.nanoTime();
-        System.out.println(getTimeStamp() + "[Thread-" + String.format("%05d", ID) + "] a: " + a + ", b: " + b + " / End (time: " + ((EndTime - StartTime) / 1000000) + ")");
-        init(0);
+        createFile();
+        writeData();
+        long endTime = System.currentTimeMillis();
+        System.out.println(getTimeStamp() + "[Thread-" + String.format("%05d", ID) + "] a: " + a + ", b: " + b + " / End (time: " + (endTime - startTime) + "ms)");
+        setReturnCode(0);
     }
 
-    private void init(int returnCode) {
-        PowNumbers = null;
-        Logs.clear();
-        ReturnCode = returnCode;
-    }
-
-    public int getReturnCode() {
-        return ReturnCode;
-    }
-
-    private boolean isNExist(int a, int b, BigInteger p, BigInteger q, String str, int n, int r) {
+    private boolean isNExist(boolean[] recipe, int n, int r, int index) {
         if (r == 1) {
-            String zero = "0";
-            StringBuilder builder = new StringBuilder(zero.repeat(n));
-            for (int i = 0; i < n; i++) {
-                builder.setCharAt(i, '1');
-                String newStr = String.valueOf(str) + builder.toString();
-                builder.setCharAt(i, '0');
-                BigInteger k = getK(newStr);
-                if (check(a, b, newStr, k, p, q)) {
+            for (; index < recipe.length; index++) {
+                recipe[index] = true;
+                boolean[] recipeClone = recipe.clone();
+                recipe[index] = false;
+                BigInteger k = getK(recipeClone);
+                if (check(recipeClone, k)) {
                     return true;
                 }
             }
             return false;
         }
         if (n == r) {
-            String one = "1";
-            String newStr = String.valueOf(str) + one.repeat(n);
-            BigInteger k = getK(newStr);
-            return check(a, b, newStr, k, p, q);
+            for (; index < recipe.length; index++) {
+                recipe[index] = true;
+            }
+            BigInteger k = getK(recipe.clone());
+            return check(recipe.clone(), k);
         }
-        if (isNExist(a, b, p, q, "1" + str, n - 1, r - 1)) {
+        recipe[index] = true;
+        if (isNExist(recipe.clone(), n - 1, r - 1, index + 1)) {
             return true;
         }
-        if (isNExist(a, b, p, q, "0" + str, n - 1, r)) {
+        recipe[index] = false;
+        if (isNExist(recipe.clone(), n - 1, r, index + 1)) {
             return true;
         }
         return false;
     }
 
-    private BigInteger getK(String str) {
+    private BigInteger getK(boolean[] recipe) {
         BigInteger k = ONE;
-        for (int i = 0; i < str.length(); i++) {
-            if (str.charAt(i) == '1') {
+        for (int i = 0; i < recipe.length; i++) {
+            if (recipe[i]) {
                 k = k.multiply(THREE).add(PowNumbers.get(i + 1));
             }
         }
         return k;
     }
 
-    private boolean check(int a, int b, String str, BigInteger k, BigInteger p, BigInteger q) {
+    private boolean check(boolean[] recipe, BigInteger k) {
         if (k.remainder(p.subtract(q)).compareTo(BigInteger.ZERO) == 0) {
             BigInteger n = k.divide(p.subtract(q));
             if (n.compareTo(BigInteger.ONE) != 0) {
                 BigInteger N = n;
                 int i = 0;
                 Logs.add("+========================================+");
-                Logs.add("a:" + a + ",   b:" + b);
-                Logs.add("str:" + str);
-                Logs.add("k:" + k.toString());
-                Logs.add("Condition Satisfaction");
-                Logs.add("n:" + n.toString());
+                Logs.add("a: " + a + ",   b: " + b);
+                Logs.add("recipe: " + Arrays.toString(recipe));
+                Logs.add("k: " + k.toString());
+                Logs.add("n: " + n.toString());
                 while (N.compareTo(BigInteger.ONE) != 0) {
                     N = col(N);
                     i++;
@@ -143,19 +132,27 @@ public class CollatzThread extends Thread {
         return N.multiply(THREE).add(ONE);
     }
 
+    private void setReturnCode(int returnCode) {
+        ReturnCode = returnCode;
+    }
+
+    public int getReturnCode() {
+        return ReturnCode;
+    }
+
     private String getTimeStamp() {
         return new SimpleDateFormat("[yyyy-MM-dd (EEE)  a hh:mm:ss]     ").format(new Date());
     }
 
-    private boolean isFileExist(int a, int b) {
+    private boolean isFileExist() {
         createFolder();
         File file = new File("data/" + a + "." + b + ".txt");
         return (file.exists() && file.isFile());
     }
 
-    private void createFile(int a, int b) {
+    private void createFile() {
         createFolder();
-        if (!isFileExist(a, b)) {
+        if (!isFileExist()) {
             File file = new File("data/" + a + "." + b + ".txt");
             try {
                 file.createNewFile();
@@ -165,7 +162,7 @@ public class CollatzThread extends Thread {
         }
     }
 
-    private void writeData(int a, int b) {
+    private void writeData() {
         try {
             File file = new File("data/" + a + "." + b + ".txt");
             FileWriter w = new FileWriter(file);
