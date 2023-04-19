@@ -4,10 +4,10 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.math.BigInteger;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Date;
+
+import com.p16729438.Collatz.Util.CollatzUtil;
 
 public class CollatzThread extends Thread {
     private int ID;
@@ -42,17 +42,16 @@ public class CollatzThread extends Thread {
     @Override
     public void run() {
         long startTime = System.currentTimeMillis();
-        System.out.println(getTimeStamp() + "[Thread-" + String.format("%05d", ID) + "] a: " + a + ", b: " + b + " / Start");
+        System.out.println(CollatzUtil.getTimeStamp() + "[Thread-" + String.format("%05d", ID) + "] a: " + a + ", b: " + b + " / Start");
         if (isNExist(new boolean[a], a, b - 1, 0)) {
             long endTime = System.currentTimeMillis();
-            System.out.println(getTimeStamp() + "[Thread-" + String.format("%05d", ID) + "] a: " + a + ", b: " + b + " / Loop Found (time: " + (endTime - startTime) + "ms)");
+            System.out.println(CollatzUtil.getTimeStamp() + "[Thread-" + String.format("%05d", ID) + "] a: " + a + ", b: " + b + " / Loop Found (time: " + (endTime - startTime) + "ms)");
             setReturnCode(2);
             return;
         }
-        createFile();
         writeData();
         long endTime = System.currentTimeMillis();
-        System.out.println(getTimeStamp() + "[Thread-" + String.format("%05d", ID) + "] a: " + a + ", b: " + b + " / End (time: " + (endTime - startTime) + "ms)");
+        System.out.println(CollatzUtil.getTimeStamp() + "[Thread-" + String.format("%05d", ID) + "] a: " + a + ", b: " + b + " / End (time: " + (endTime - startTime) + "ms)");
         setReturnCode(0);
     }
 
@@ -140,29 +139,8 @@ public class CollatzThread extends Thread {
         return ReturnCode;
     }
 
-    private String getTimeStamp() {
-        return new SimpleDateFormat("[yyyy-MM-dd (EEE)  a hh:mm:ss]     ").format(new Date());
-    }
-
-    private boolean isFileExist() {
-        createFolder();
-        File file = new File("data/" + a + "." + b + ".txt");
-        return (file.exists() && file.isFile());
-    }
-
-    private void createFile() {
-        createFolder();
-        if (!isFileExist()) {
-            File file = new File("data/" + a + "." + b + ".txt");
-            try {
-                file.createNewFile();
-            } catch (IOException exception) {
-                exception.printStackTrace();
-            }
-        }
-    }
-
     private void writeData() {
+        createFile();
         try {
             File file = new File("data/" + a + "." + b + ".txt");
             FileWriter w = new FileWriter(file);
@@ -172,9 +150,27 @@ public class CollatzThread extends Thread {
             w.flush();
             w.close();
             Logs.clear();
-        } catch (IOException exception) {
-            exception.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
         }
+    }
+
+    private void createFile() {
+        createFolder();
+        if (!isFileExist()) {
+            File file = new File("data/" + a + "." + b + ".txt");
+            try {
+                file.createNewFile();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    private boolean isFileExist() {
+        createFolder();
+        File file = new File("data/" + a + "." + b + ".txt");
+        return (file.exists() && file.isFile());
     }
 
     private void createFolder() {

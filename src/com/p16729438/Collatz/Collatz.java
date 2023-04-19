@@ -1,10 +1,16 @@
 package com.p16729438.Collatz;
 
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import java.io.File;
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.math.BigInteger;
 import java.util.ArrayList;
 
 import com.p16729438.Collatz.Thread.CollatzThread;
+import com.p16729438.Collatz.Util.CollatzUtil;
 
 public class Collatz {
     private int ThreadCount;
@@ -69,6 +75,7 @@ public class Collatz {
                 }
                 if (threads[index] == null) {
                     threads[index] = new CollatzThread(index, a, b, p, q, PowNumbers);
+                    appendLog(CollatzUtil.getTimeStamp() + "[Thread-" + String.format("%05d", index) + "] a: " + a + ", b: " + b + " / Start");
                     threads[index].start();
                     b++;
                     q = q.multiply(THREE);
@@ -103,6 +110,47 @@ public class Collatz {
         createFolder();
         File file = new File("data/" + a + "." + b + ".txt");
         return (file.exists() && file.isFile());
+    }
+
+    private void appendLog(String log) {
+        createLogFile();
+        try {
+            File logFile = new File("data/" + a + "." + b + ".txt");
+            BufferedReader r = new BufferedReader(new FileReader(logFile));
+            ArrayList<String> prevLogs = new ArrayList<String>();
+            String str;
+            while ((str = r.readLine()) != null) {
+                prevLogs.add(str);
+            }
+            r.close();
+            BufferedWriter w = new BufferedWriter(new FileWriter(logFile));
+            for (String prevLog : prevLogs) {
+                w.append(prevLog);
+            }
+            w.append(log);
+            w.flush();
+            w.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void createLogFile() {
+        createFolder();
+        if (!isLogFileExist()) {
+            File logFile = new File("data/" + a + "." + b + ".txt");
+            try {
+                logFile.createNewFile();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    private boolean isLogFileExist() {
+        createFolder();
+        File logFile = new File("data/" + a + "." + b + ".txt");
+        return logFile.exists();
     }
 
     private void createFolder() {
