@@ -125,7 +125,7 @@ public class Collatz {
             r.close();
             BufferedWriter w = new BufferedWriter(new FileWriter(logFile));
             for (String prevLog : prevLogs) {
-                w.append(prevLog);
+                w.append(prevLog + "\n");
             }
             w.append(log);
             w.flush();
