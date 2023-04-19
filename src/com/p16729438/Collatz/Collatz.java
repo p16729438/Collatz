@@ -115,7 +115,7 @@ public class Collatz {
     private void appendLog(String log) {
         createLogFile();
         try {
-            File logFile = new File("data/" + a + "." + b + ".txt");
+            File logFile = new File("logs.txt");
             BufferedReader r = new BufferedReader(new FileReader(logFile));
             ArrayList<String> prevLogs = new ArrayList<String>();
             String str;
@@ -138,7 +138,7 @@ public class Collatz {
     private void createLogFile() {
         createFolder();
         if (!isLogFileExist()) {
-            File logFile = new File("data/" + a + "." + b + ".txt");
+            File logFile = new File("logs.txt");
             try {
                 logFile.createNewFile();
             } catch (IOException e) {
@@ -148,8 +148,7 @@ public class Collatz {
     }
 
     private boolean isLogFileExist() {
-        createFolder();
-        File logFile = new File("data/" + a + "." + b + ".txt");
+        File logFile = new File("logs.txt");
         return logFile.exists();
     }
 
