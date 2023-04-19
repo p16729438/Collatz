@@ -44,6 +44,7 @@ public class CollatzThread extends Thread {
         long startTime = System.currentTimeMillis();
         System.out.println(CollatzUtil.getTimeStamp() + "[Thread-" + String.format("%05d", ID) + "] a: " + a + ", b: " + b + " / Start");
         if (isNExist(new boolean[a], a, b - 1, 0)) {
+            writeData();
             long endTime = System.currentTimeMillis();
             System.out.println(CollatzUtil.getTimeStamp() + "[Thread-" + String.format("%05d", ID) + "] a: " + a + ", b: " + b + " / Loop Found (time: " + (endTime - startTime) + "ms)");
             setReturnCode(2);
